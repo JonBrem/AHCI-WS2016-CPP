@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include" />
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include-fixed" />
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include/objc" />
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include/ssp" />
+          <root url="file://C:/MinGW/mingw64/x86_64-w64-mingw32/include" />
+          <root url="file://C:/OpenCV/build" />
+          <root url="file://C:/OpenCV/source/include" />
+          <root url="file://C:/OpenCV/source/modules/calib3d/include" />
+          <root url="file://C:/OpenCV/source/modules/core/include" />
+          <root url="file://C:/OpenCV/source/modules/features2d/include" />
+          <root url="file://C:/OpenCV/source/modules/flann/include" />
+          <root url="file://C:/OpenCV/source/modules/hal/include" />
+          <root url="file://C:/OpenCV/source/modules/highgui/include" />
+          <root url="file://C:/OpenCV/source/modules/imgcodecs/include" />
+          <root url="file://C:/OpenCV/source/modules/imgproc/include" />
+          <root url="file://C:/OpenCV/source/modules/ml/include" />
+          <root url="file://C:/OpenCV/source/modules/objdetect/include" />
+          <root url="file://C:/OpenCV/source/modules/photo/include" />
+          <root url="file://C:/OpenCV/source/modules/shape/include" />
+          <root url="file://C:/OpenCV/source/modules/stitching/include" />
+          <root url="file://C:/OpenCV/source/modules/superres/include" />
+          <root url="file://C:/OpenCV/source/modules/ts/include" />
+          <root url="file://C:/OpenCV/source/modules/video/include" />
+          <root url="file://C:/OpenCV/source/modules/videoio/include" />
+          <root url="file://C:/OpenCV/source/modules/videostab/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include" />
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include-fixed" />
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include/objc" />
+          <root url="file://C:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/5.2.0/include/ssp" />
+          <root url="file://C:/MinGW/mingw64/x86_64-w64-mingw32/include" />
+          <root url="file://C:/OpenCV/build" />
+          <root url="file://C:/OpenCV/source/include" />
+          <root url="file://C:/OpenCV/source/modules/calib3d/include" />
+          <root url="file://C:/OpenCV/source/modules/core/include" />
+          <root url="file://C:/OpenCV/source/modules/features2d/include" />
+          <root url="file://C:/OpenCV/source/modules/flann/include" />
+          <root url="file://C:/OpenCV/source/modules/hal/include" />
+          <root url="file://C:/OpenCV/source/modules/highgui/include" />
+          <root url="file://C:/OpenCV/source/modules/imgcodecs/include" />
+          <root url="file://C:/OpenCV/source/modules/imgproc/include" />
+          <root url="file://C:/OpenCV/source/modules/ml/include" />
+          <root url="file://C:/OpenCV/source/modules/objdetect/include" />
+          <root url="file://C:/OpenCV/source/modules/photo/include" />
+          <root url="file://C:/OpenCV/source/modules/shape/include" />
+          <root url="file://C:/OpenCV/source/modules/stitching/include" />
+          <root url="file://C:/OpenCV/source/modules/superres/include" />
+          <root url="file://C:/OpenCV/source/modules/ts/include" />
+          <root url="file://C:/OpenCV/source/modules/video/include" />
+          <root url="file://C:/OpenCV/source/modules/videoio/include" />
+          <root url="file://C:/OpenCV/source/modules/videostab/include" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
