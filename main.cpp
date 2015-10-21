@@ -1,110 +1,112 @@
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include <cstdio>
+#include <opencv2/core/core.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
-using namespace std;
+/* function prototypes */
+void detect(cv::Mat &);
+void detectFaces(std::vector<cv::Rect> &, cv::Mat const &, cv::CascadeClassifier &);
+void detectEyes(cv::Rect &, cv::Mat &, cv::Mat const &, cv::CascadeClassifier &);
+void detectSmile(cv::Rect &, cv::Mat &, cv::Mat const &, cv::CascadeClassifier &);
 
-const char* cascade_name_face = "haarcascade_frontalface_default.xml";
-const char* cascade_name_eyes = "haarcascade_eye_tree_eyeglasses.xml";
-const char* cascade_name_smile = "haarcascade_smile.xml";
+/** @function main */
+int main()
+{
+    cv::VideoCapture capture(0);
+    cv::Mat frame;
 
-void detectAndDisplay(cv::Mat frame);
-cv::Rect detectFace(cv::Mat frame);
-
-cv::CascadeClassifier faceCascade;
-cv::CascadeClassifier smileCascade;
-cv::CascadeClassifier eyesCascade;
-
-int main() {
-    cv::VideoCapture cap(0); // open the default camera
-    if(!cap.isOpened())  // check if we succeeded
-        return -1;
-
-    if(!faceCascade.load(cascade_name_face)) {
-        printf("Error loading face cascade");
-        return -1;
-    }
-
-    if(!smileCascade.load(cascade_name_smile)) {
-        printf("Error loading smile cascade");
-        return -1;
-    }
-
-    if(!eyesCascade.load(cascade_name_eyes)) {
-        printf("Error loading eye cascade");
-        return -1;
-    }
-
-    cv::namedWindow("Cam",1);
-    for(;;)
+    if(!capture.isOpened())
     {
-        cv::Mat frame;
-        cap >> frame; // get a new frame from camera
-
-        detectAndDisplay(frame);
-
-        if(cv::waitKey(30) >= 0) break;
+        printf("--(!)Error opening video capture\n");
+        return -1;
     }
-    // the camera will be deinitialized automatically in VideoCapture destructor
+
+    while ( capture.read(frame) )
+    {
+        if( frame.empty() )
+        {
+            printf(" --(!) No captured frame -- Break!");
+            break;
+        }
+
+        detect(frame);
+
+        if((char) cv::waitKey(10) == 27) break; // escape
+    }
+
     return 0;
 }
 
-void detectAndDisplay(cv::Mat frame) {
-    cv::Rect face(-1, -1, -1, -1);
+void detect(cv::Mat & frame)
+{
+    std::string const face_cascade_name = "haarcascade_frontalface_alt.xml";
+    std::string const eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
+    std::string const smile_cascade_name = "haarcascade_smile.xml";
+
+    cv::CascadeClassifier face_cascade;
+    cv::CascadeClassifier eyes_cascade;
+    cv::CascadeClassifier smile_cascade;
+
+    if( !face_cascade.load( face_cascade_name ) ){ printf("--(!)Error loading face cascade\n"); return; };
+    if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("--(!)Error loading eyes cascade\n"); return; };
+    if( !smile_cascade.load( smile_cascade_name ) ){ printf("--(!)Error loading eyes cascade\n"); return; };
+
     cv::Mat frame_gray;
     cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
     cv::equalizeHist(frame_gray, frame_gray);
 
-    face = detectFace(frame_gray);
-    if(face.x == -1) {
-        imshow("Cam", frame);
-        return;
+    std::vector<cv::Rect> faces;
+
+    detectFaces(faces, frame_gray, face_cascade);
+
+    for (size_t i = 0; i < faces.size(); i++)
+    {
+        detectEyes(faces[i], frame, frame_gray, eyes_cascade);
+        detectSmile(faces[i], frame, frame_gray, smile_cascade);
     }
 
-    cv::Point center (face.x + face.width / 2, face.y + face.height / 2);
-    cv::ellipse(frame, center, cv::Size(face.width / 2, face.height / 2), 0, 0, 360, cv::Scalar(255, 0, 255), 4, 8, 0);
+    cv::imshow("Cam Preview", frame);
+}
 
-    // SMILE DETECTION @TODO decompose
+void detectFaces(std::vector<cv::Rect> & faces, cv::Mat const & frame, cv::CascadeClassifier & classifier)
+{
+    classifier.detectMultiScale(frame, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30) );
+}
+
+void detectEyes(cv::Rect & face, cv::Mat & frame, cv::Mat const & frame_gray, cv::CascadeClassifier & classifier)
+{
+    std::vector<cv::Rect> eyes;
+
+    cv::Point center(face.x + face.width / 2, face.y + face.height / 2);
+    cv::ellipse(frame, center, cv::Size(face.width / 2, face.height / 2 ), 0, 0, 360, cv::Scalar(0, 255, 255), 4, 8, 0);
+
+    cv::Mat faceROI = frame_gray(face);
+
+    classifier.detectMultiScale(faceROI, eyes, 1.1, 20, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+
+    for (size_t i = 0; i < eyes.size(); i++)
+    {
+        cv::Point eye_center(face.x + eyes[i].x + eyes[i].width / 2, face.y + eyes[i].y + eyes[i].height / 2);
+
+        int radius = cvRound((eyes[i].width + eyes[i].height) * 0.25 );
+
+        cv::circle(frame, eye_center, radius, cv::Scalar(0, 0, 255), 4, 8, 0);
+    }
+}
+
+void detectSmile(cv::Rect & face, cv::Mat & frame, cv::Mat const & frame_gray, cv::CascadeClassifier & classifier)
+{
     std::vector<cv::Rect> smile;
-    cv::Mat faceMat = frame_gray(face);
 
-    smileCascade.detectMultiScale(frame_gray, smile, 1.1, 200, 0|cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+    classifier.detectMultiScale(frame_gray, smile, 1.1, 125, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
 
     for(size_t j = 0; j < smile.size(); ++j) {
         cv::Point smileCenter (smile[j].x + smile[j].width / 2, smile[j].y + smile[j].height / 2);
 
         if(smileCenter.inside(face) && smileCenter.y >= face.y + face.height / 2) {
-            cv::ellipse(frame, smileCenter, cv::Size(smile[j].width / 2, smile[j].height / 2), 0, 0, 360,
-                        cv::Scalar(255, 0, 0), 4, 8, 0);
+            cv::ellipse(frame, smileCenter, cv::Size(smile[j].width / 2, smile[j].height / 2), 0, 0, 360, cv::Scalar(0, 255, 0), 4, 8, 0);
         }
-    }
-
-    // EYE DETECTION @TODO decompose @TODO error!! crashes system
-    //std::vector<cv::Rect> eyes;
-    //eyesCascade.detectMultiScale(frame_gray, eyes, 1.1, 2, 0|cv::CASCADE_SCALEyw_IMAGE, cv::Size(30, 30));
-    // show eyes on frame
-
-    imshow("Cam", frame);
-}
-
-cv::Rect detectFace(cv::Mat grayFrame) {
-    std::vector<cv::Rect> faces;
-    faceCascade.detectMultiScale(grayFrame, faces, 1.1, 2, 0|cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
-
-    int heighestSizeIndex = -1;
-    int heighestSize = 0;
-
-    for(size_t i = 0; i < faces.size(); ++i) {
-        int size = faces[i].height * faces[i].width;
-        if (size > heighestSize) {
-            heighestSizeIndex = i;
-            heighestSize = size;
-        }
-    }
-
-    if(heighestSizeIndex != -1) {
-        return faces[heighestSizeIndex];
-    } else {
-        cv::Rect r(-1, -1, -1, -1);
-        return r;
     }
 }
