@@ -46,9 +46,11 @@ int main()
         return -1;
     }
 
-    while (capture.read(frame))
+    while(true)
     {
-        if( frame.empty() )
+        capture >> frame;
+        
+        if(frame.empty())
         {
             std::cout << " --(!) No captured frame -- Break!" << std::endl;
             break;
