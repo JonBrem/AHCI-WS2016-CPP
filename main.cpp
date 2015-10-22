@@ -12,17 +12,25 @@ void detectFaces(std::vector<cv::Rect> &, cv::Mat const &, cv::CascadeClassifier
 void detectEyes(cv::Rect const &, cv::Mat &, cv::Mat const &, cv::CascadeClassifier &);
 void detectSmile(cv::Rect const &, cv::Mat &, cv::Mat const &, cv::CascadeClassifier &);
 
-/* constants */
+/*
+ * constants
+ */
 std::string const static FACE_CASCADE_NAME = "haarcascade_frontalface_alt.xml";
 std::string const static EYES_CASCADE_NAME = "haarcascade_eye_tree_eyeglasses.xml";
 std::string const static SMILE_CASCADE_NAME = "haarcascade_smile.xml";
 
-/* global */
+/**
+ *  global variables
+ */
 cv::CascadeClassifier static face_cascade;
 cv::CascadeClassifier static eyes_cascade;
 cv::CascadeClassifier static smile_cascade;
 
-/* main */
+/**
+ * \brief main function serving as entry point to program
+ *
+ * @return 0 if programm was executed correctly
+ */
 int main()
 {
     cv::VideoCapture capture(0);
@@ -56,6 +64,18 @@ int main()
     return 0;
 }
 
+/**
+ * \brief wrapper function for facial recognition
+ *
+ * @param[out] frame holds image data
+ * @param[in] face_cascade facial recognition
+ * @param[in] eyes_cascade eyes detection
+ * @param[in] smile_cascade smile detection
+ *
+ * Highlights all detected features, face, eyes, smile in the camera image
+ *
+ * @see main()
+ */
 void detect(cv::Mat & frame, cv::CascadeClassifier & face_cascade, cv::CascadeClassifier & eyes_cascade, cv::CascadeClassifier & smile_cascade)
 {
     cv::Mat frame_gray;
@@ -73,11 +93,34 @@ void detect(cv::Mat & frame, cv::CascadeClassifier & face_cascade, cv::CascadeCl
     }
 }
 
+/**
+ * \brief detects faces in image
+ *
+ * @param[out] faces a data structure holding data of found faces
+ * @param[in] frame holds the current camera image
+ * @param[in] classifier detects faces in images
+ *
+ * retrieves all faces in an image and saves them to a given data structure
+ *
+ * @see detect()
+ */
 void detectFaces(std::vector<cv::Rect> & faces, cv::Mat const & frame, cv::CascadeClassifier & classifier)
 {
     classifier.detectMultiScale(frame, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30) );
 }
 
+/**
+ * \brief detects eyes in an image
+ *
+ * @param[in] face represents the current face to detect eyes in
+ * @param[out] frame holds the data of the current image
+ * @param[in] frame_gray contains the equalized grayscale image of the current image
+ * @param[in] classifier detects eyes in images
+ *
+ * retrieves all eyes detected in a face and highlights them in the current camera image
+ *
+ * @see detect()
+ */
 void detectEyes(cv::Rect const & face, cv::Mat & frame, cv::Mat const & frame_gray, cv::CascadeClassifier & classifier)
 {
     std::vector<cv::Rect> eyes;
@@ -98,6 +141,18 @@ void detectEyes(cv::Rect const & face, cv::Mat & frame, cv::Mat const & frame_gr
     }
 }
 
+/**
+ * \brief detects smile in an image
+ *
+ * @param[in] face represents the current face to detect smiles in
+ * @param[out] frame holds the data of the current image
+ * @param[in] frame_gray contains the equalized grayscale image of the current image
+ * @param[in] classifier detects smiles in images
+ *
+ * retrieves all smiles detected in a face and highlights them in the current camera image
+ *
+ * @see detect()
+ */
 void detectSmile(cv::Rect const & face, cv::Mat & frame, cv::Mat const & frame_gray, cv::CascadeClassifier & classifier)
 {
     std::vector<cv::Rect> smile;
