@@ -16,7 +16,7 @@ void detectSmile(cv::Rect const &, cv::Mat &, cv::Mat const &, cv::CascadeClassi
  * constants
  */
 std::string const static FACE_CASCADE_NAME = "haarcascade_frontalface_alt.xml";
-std::string const static EYES_CASCADE_NAME = "haarcascade_eye_tree_eyeglasses.xml";
+std::string const static EYES_CASCADE_NAME = "haarcascade_eye.xml";
 std::string const static SMILE_CASCADE_NAME = "haarcascade_smile.xml";
 
 /**
@@ -49,12 +49,17 @@ int main()
     while(true)
     {
         capture >> frame;
-        
+
         if(frame.empty())
         {
             std::cout << " --(!) No captured frame -- Break!" << std::endl;
             break;
         }
+
+        std::vector<cv::Vec4i> hierarchy;
+        cv::pyrDown(frame, frame);
+        cv::dilate(frame, frame, hierarchy);
+
 
         detect(frame, face_cascade, eyes_cascade, smile_cascade);
 
